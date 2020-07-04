@@ -14,42 +14,49 @@ import java.util.Map;
 
 @Service
 public class UnlikeService {
-    private static final Integer MAX_UNLIKE_COUNT = 10;
+    private static final Integer MAX_UNLIKE_COUNT = 3;
 
     public void add(AbstractUnlike unlike) throws ServiceException {
+        //校验用户是否存在
         Integer userId = unlike.getUserId();
         if(!checkUser(userId)){
             throw new ServiceException(ErrorCode.ADD_001);
         }
 
+        //校验动态是否存在
         Moment moment = getMoment(unlike.getMomentId());
         if(moment == null){
             throw new ServiceException(ErrorCode.ADD_004);
         }
 
+        //校验好友关系
         if(!checkRelation(userId, moment.getUserId())){
             throw new ServiceException(ErrorCode.ADD_002);
         }
 
+        //校验朋友圈权限
         if(!checkMomentsPermission(userId, moment.getUserId())){
             throw new ServiceException(ErrorCode.ADD_003);
         }
 
+        //校验踩次数是否超标
         Integer unlikeCount = UserDao.getUserUnlikeCount(userId);
-        if(unlikeCount > MAX_UNLIKE_COUNT){
+        if(unlikeCount >= MAX_UNLIKE_COUNT){
             throw new ServiceException(ErrorCode.ADD_005);
         }
 
+        //校验是否已经赞
         if(LikeDao.checkLikeStatus(userId, moment.getMomentId())){
             throw new ServiceException(ErrorCode.ADD_006);
         }
 
+        //校验是否已经踩
         if(UnlikeDao.checkUnlikeStatus(userId, moment.getMomentId())){
             throw new ServiceException(ErrorCode.ADD_007);
         }
 
-        UnlikeDao.save(unlike);
-        UserDao.adduserUnlikeCount(userId, 1);
+        UnlikeDao.save(unlike);                          //保存踩数据
+        UserDao.addUserUnlikeCount(userId, 1);     //更新用户踩数量
     }
 
     private Boolean checkUser(Integer userId) throws ServiceException{
@@ -58,7 +65,8 @@ public class UnlikeService {
             throw new ServiceException(ResponseCode.SYSTEM_EXCEPTION, response.getMessage());
         }
 
-        return (Boolean)response.getData();
+        //return (Boolean)response.getData();  //实际代码，依赖其它微服务api返回的结果
+        return true; //mock代码，让程序能跑通正常流程
     }
 
     private Boolean checkRelation(Integer userId, Integer friendId) throws ServiceException{
@@ -70,7 +78,8 @@ public class UnlikeService {
             throw new ServiceException(ResponseCode.SYSTEM_EXCEPTION, response.getMessage());
         }
 
-        return (Boolean)response.getData();
+        //return (Boolean)response.getData();  //实际代码，依赖其它微服务api返回的结果
+        return true; //mock代码，让程序能跑通正常流程
     }
 
     private Boolean checkMomentsPermission(Integer userId, Integer friendId) throws ServiceException{
@@ -82,7 +91,8 @@ public class UnlikeService {
             throw new ServiceException(ResponseCode.SYSTEM_EXCEPTION, response.getMessage());
         }
 
-        return (Boolean)response.getData();
+        //return (Boolean)response.getData();  //实际代码，依赖其它微服务api返回的结果
+        return true; //mock代码，让程序能跑通正常流程
     }
 
     private Moment getMoment(Integer momentId) throws ServiceException{
@@ -91,7 +101,8 @@ public class UnlikeService {
             throw new ServiceException(ResponseCode.SYSTEM_EXCEPTION, response.getMessage());
         }
 
-        return (Moment)response.getData();
+        //return (Moment)response.getData(); //实际代码，依赖其它微服务api返回的结果
+        return new Moment(momentId); //mock代码，让程序能跑通正常流程
     }
 
     public static class ErrorCode{

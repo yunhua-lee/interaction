@@ -2,9 +2,54 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>主页</title>
+    <title>interaction demo</title>
 </head>
 <body>
-<h1 th:text="${newWorld}">Hello World</h1>
+<h1>欢迎进入interaction系统，这是书籍《编程的逻辑》的demo系统</h1>
+<h2>测试方法</h2>
+请输入用户id：<input type="text" id="userId" /> 请输入动态id：<input type="text" id="momentId" />
+<button onclick="addUnlike()">踩一踩</button><br/>
+返回结果：<br/>
+<textarea id="result" rows="5" cols="80"></textarea>
+<p>如有任何疑问或者建议，请<a href="https://github.com/yunhua-lee/interaction/issues" target="_blank">提交github issue</a></p>
+<script>
+    function addUnlike(){
+        var requestId = Math.floor(Math.random() * 10000) + 10000;
+        var userId = document.getElementById('userId').value;
+        var momentId = document.getElementById('momentId').value;
+        var type = Math.floor(Math.random() * 1) + 1;
+        var time = (new Date()).Format("yyyy-MM-dd HH:mm:ss");
+
+        var url = 'http://localhost:8080/api/v1/unlike/add';
+        var param = 'requestId=' + requestId + '&userId=' + userId + '&momentId=' + momentId + '&type=' + type + '&time=' + time;
+
+        console.log(param);
+
+        var httpRequest = new XMLHttpRequest();
+        httpRequest.open('POST', url, true);
+        httpRequest.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        httpRequest.send(param);
+
+        httpRequest.onreadystatechange = function () {
+            document.getElementById('result').value = httpRequest.responseText;
+        };
+    }
+
+    Date.prototype.Format = function (fmt) {
+        var o = {
+            "M+": this.getMonth() + 1,
+            "d+": this.getDate(),
+            "H+": this.getHours(),
+            "m+": this.getMinutes(),
+            "s+": this.getSeconds(),
+            "q+": Math.floor((this.getMonth() + 3) / 3),
+            "S": this.getMilliseconds()
+        };
+        if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        return fmt;
+    }
+</script>
 </body>
 </html>

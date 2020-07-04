@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class IndexController {
 
     @RequestMapping("/")
-    public String index(ModelMap map){
-        map.addAttribute("newWorld","WELCOME TO NEW WORLD!!!");
+    public String index(){
         return "index";
     }
 }

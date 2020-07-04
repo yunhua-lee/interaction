@@ -60,14 +60,13 @@ public class UnlikeController {
         try {
             time = formatter.parse(timeStr);
         } catch (ParseException e) {
-            e.printStackTrace();
             response.setErrorCode(ResponseCode.INVALID_PARAM);
             response.setMessage("invalid time: " + timeStr);
 
             return response;
         }
 
-        AbstractUnlike unlike = null;
+        AbstractUnlike unlike;
         if(type == Unlike.TYPE){
             unlike = new Unlike();
         } else if(type == AnonymousUnlike.TYPE){
@@ -88,8 +87,6 @@ public class UnlikeController {
             unlikeService.add(unlike);
             response.setErrorCode(ResponseCode.SUCCESS);
         } catch (ServiceException e) {
-            e.printStackTrace();
-
             response.setErrorCode(e.getErrorCode());
             response.setMessage(e.getMessage());
         }

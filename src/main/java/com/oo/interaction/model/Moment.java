@@ -8,6 +8,9 @@ public class Moment {
     private Date time;
     private String content;
 
+    public Moment(Integer momentId){
+        this.momentId = momentId;
+    }
     public Integer getMomentId() {
         return momentId;
     }

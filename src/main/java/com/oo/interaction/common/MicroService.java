@@ -1,7 +1,7 @@
 package com.oo.interaction.common;
 
 /**
- * 系统微服务列表
+ * 微服务列表
  */
 public enum MicroService {
     MS_INTERACTION, //对应系统设计序列图中的互动子系统interactionService
